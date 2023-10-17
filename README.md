@@ -1,6 +1,6 @@
 # PROSE: Predicting Operators and Symbolic Expressions using Multimodal Transformers
 
-This repository contains code for the paper [PROSE: Predicting Operators and Symbolic Expressions using Multimodal Transformers](https://arxiv.org/abs/2309.16816).
+This repository contains code for the paper [PROSE: Predicting Operators and Symbolic Expressions using Multimodal Transformers](https://arxiv.org/abs/2309.16816). See also the [UCLA CAM Reports](https://ww3.math.ucla.edu/wp-content/uploads/2023/10/PROSE_cam.pdf).
 
 The code is based on the repositories [Deep Symbolic Regression](https://github.com/facebookresearch/symbolicregression) and [Deep Learning for Symbolic Mathematics](https://github.com/facebookresearch/SymbolicMathematics).
 
