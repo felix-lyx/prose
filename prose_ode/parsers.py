@@ -29,9 +29,7 @@ def get_parser():
     batch_size_eval = 256  # default 256
     eval_size = 25600  # eval dataset size
 
-    dataset_path = (
-        "functions,../dataset/ode_3d/train_512000.prefix,../dataset/ode_3d/val_25600.prefix,"
-    )
+    dataset_path = "functions,../../dataset/ode_3d/train_512000.prefix,../../dataset/ode_3d/val_25600.prefix,"
 
     # main parameters
 
@@ -41,7 +39,7 @@ def get_parser():
         default=False,
         help="enable dry_run (1 epoch 5 steps)",
     )
-    parser.add_argument("--cpu", action="store_true", default=False, help="Run on CPU")
+    parser.add_argument("--cpu", action="store_true", help="Run on CPU")
     parser.add_argument("--eval_in_domain", type=bool_flag, default=True)
     parser.add_argument(
         "--use_wandb",
@@ -52,18 +50,18 @@ def get_parser():
     parser.add_argument(
         "--save_periodic",
         type=int,
-        default=20,  # 25
+        default=40,
         help="Save the model periodically (0 to disable)",
     )
     parser.add_argument(
         "--log_periodic",
         type=int,
-        default=50,
+        default=100,
         help="Log stats periodically (0 to disable)",
     )
-    parser.add_argument("--text_only", action="store_true", default=False, help="no data decoder")
-    parser.add_argument("--data_only", action="store_true", default=False, help="no text decoder")
-    parser.add_argument("--no_text", action="store_true", default=False, help="no text at all")
+    parser.add_argument("--text_only", action="store_true", help="no data decoder")
+    parser.add_argument("--data_only", action="store_true", help="no text decoder")
+    parser.add_argument("--no_text", action="store_true", help="no text at all")
     parser.add_argument(
         "--split_fused_feature_text",
         default=True,
@@ -182,7 +180,7 @@ def get_parser():
         "--amp",
         type=int,
         default=0,
-        help="Use AMP wrapper for float16 / distributed / gradient accumulation. Level of optimization. -1 to disable.",
+        help="Use AMP wrapper for mixed precision / gradient accumulation. -1 to disable.",
     )
     parser.add_argument(
         "--eval_amp",
@@ -193,7 +191,6 @@ def get_parser():
     parser.add_argument(
         "--compile",
         action="store_true",
-        default=False,
         help="use torch.compile to speed up",
     )
 
@@ -254,12 +251,6 @@ def get_parser():
         help="Max generated output length",
     )
     parser.add_argument(
-        "--beam_eval_train",
-        type=int,
-        default=0,
-        help="At training time, number of validation equations to test the model on using beam search (-1 for everything, 0 to disable)",
-    )
-    parser.add_argument(
         "--beam_size",
         type=int,
         default=1,
@@ -289,8 +280,6 @@ def get_parser():
         default=True,
         help="Early stopping, stop as soon as we have `beam_size` hypotheses, although longer ones may have better scores.",
     )
-    parser.add_argument("--beam_selection_metrics", type=int, default=1)
-    parser.add_argument("--max_number_bags", type=int, default=1)
 
     # reload pretrained model / checkpoint
     parser.add_argument("--reload_model", type=str, default="", help="Reload a pretrained model")
@@ -327,28 +316,14 @@ def get_parser():
         default=eval_size,
         help="Size of valid and test samples",
     )
-    parser.add_argument(
-        "--eval_only", action="store_true", default=False, help="Only run evaluations"
-    )
+    parser.add_argument("--eval_only", action="store_true", default=False, help="Only run evaluations")
     parser.add_argument("--print_outputs", action="store_true", default=False, help="print outputs")
-    parser.add_argument(
-        "--text_ode_solve", action="store_true", default=False, help="use text output as ODE map"
-    )
+    parser.add_argument("--text_ode_solve", action="store_true", default=False, help="use text output as ODE map")
     parser.add_argument("--eval_from_exp", type=str, default="", help="Path of experiment to use")
     parser.add_argument("--eval_data", type=str, default="", help="Path of data to eval")
 
     ################## unimportant ones, no need to change #################
 
-    parser.add_argument("--n_trees_to_refine", type=int, default=10, help="refine top n trees")
-
-    # float16 / AMP API
-    parser.add_argument("--fp16", type=bool_flag, default=False, help="Run model with float16")
-    parser.add_argument(
-        "--rescale",
-        type=bool_flag,
-        default=True,
-        help="Whether to rescale at inference.",
-    )
     parser.add_argument(
         "--env_base_seed",
         type=int,
@@ -363,30 +338,7 @@ def get_parser():
         help="Accumulate model gradients over N iterations (N times larger batch sizes)",
     )
 
-    # evaluation
-
-    parser.add_argument(
-        "--refinements_types",
-        type=str,
-        default="method=BFGS_batchsize=256_metric=/_mse",
-        help="What refinement to use. Should separate by _ each arg and value by =. None does not do any refinement",
-    )
-
-    parser.add_argument("--eval_verbose", type=int, default=0, help="Export evaluation details")
-    parser.add_argument(
-        "--eval_verbose_print",
-        type=bool_flag,
-        default=False,
-        help="Print evaluation details",
-    )
-
     # debug
-    parser.add_argument(
-        "--debug_slurm",
-        type=bool_flag,
-        default=False,
-        help="Debug multi-GPU / multi-node within a SLURM job",
-    )
     parser.add_argument("--debug", help="Enable all debug flags", action="store_true")
 
     # CPU / multi-gpu / multi-node
@@ -397,15 +349,6 @@ def get_parser():
         type=int,
         default=-1,
         help="Master port (for multi-node SLURM jobs)",
-    )
-    parser.add_argument(
-        "--windows",
-        type=bool_flag,
-        default=False,
-        help="Windows version (no multiprocessing for eval)",
-    )
-    parser.add_argument(
-        "--nvidia_apex", type=bool_flag, default=False, help="NVIDIA version of apex"
     )
 
     # model parameters

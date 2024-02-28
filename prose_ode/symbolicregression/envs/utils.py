@@ -4,6 +4,7 @@
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
 
+
 def zip_dic(lst):
     dico = {}
     for d in lst:
@@ -55,11 +56,3 @@ def getSizeOfNestedList(listOfElem):
         else:
             count += 1
     return count
-
-
-class ZMQNotReady(Exception):
-    pass
-
-
-class ZMQNotReadySample:
-    pass

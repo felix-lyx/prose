@@ -287,9 +287,7 @@ class FusionTransformerModel(nn.Module):
         super().__init__()
 
         # encoder / decoder, output layer
-        self.dtype = torch.half if params.fp16 else torch.float
-
-        self.apex = params.nvidia_apex
+        self.dtype = torch.float
 
         # model parameters
 
@@ -499,12 +497,10 @@ class DataTransformerModel(nn.Module):
         super().__init__()
 
         # encoder / decoder, output layer
-        self.dtype = torch.half if params.fp16 else torch.float
+        self.dtype = torch.float
         self.is_encoder = is_encoder
         self.is_decoder = not is_encoder
         self.with_output = with_output
-
-        self.apex = params.nvidia_apex
 
         # model parameters
 
@@ -835,9 +831,8 @@ class DataOperatorModel(nn.Module):
         super().__init__()
 
         # encoder / decoder, output layer
-        self.dtype = torch.half if params.fp16 else torch.float
+        self.dtype = torch.float
         self.with_output = with_output
-        self.apex = params.nvidia_apex
 
         # model parameters
 
@@ -1127,12 +1122,10 @@ class TextTransformerModel(nn.Module):
         super().__init__()
 
         # encoder / decoder, output layer
-        self.dtype = torch.half if params.fp16 else torch.float
+        self.dtype = torch.float
         self.is_encoder = is_encoder
         self.is_decoder = not is_encoder
         self.with_output = with_output
-
-        self.apex = params.nvidia_apex
 
         # dictionary
 
@@ -1544,10 +1537,7 @@ class TextTransformerModel(nn.Module):
             )
 
             assert tensor.size() == (1, bs * beam_size, self.dim)
-            if self.apex:
-                tensor = tensor.data[-1, :, :].to(self.dtype)  # (bs * beam_size, dim)
-            else:
-                tensor = tensor.data[-1, :, :]  # .to(soui elf.dtype)  # (bs * beam_size, dim)
+            tensor = tensor.data[-1, :, :]  # (bs * beam_size, dim)
             scores = self.proj(tensor)  # (bs * beam_size, n_words)
             scores = F.log_softmax(scores.float(), dim=-1)  # (bs * beam_size, n_words)
             assert scores.size() == (bs * beam_size, n_words)

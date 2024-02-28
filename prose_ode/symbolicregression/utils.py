@@ -107,22 +107,12 @@ def get_dump_path(params):
     if not os.path.exists(sweep_path):
         subprocess.Popen("mkdir -p %s" % sweep_path, shell=True).wait()
 
-    # create an ID for the job if it is not given in the parameters.
-    # if we run on the cluster, the job ID is the one of Chronos.
-    # otherwise, it is randomly generated
     if params.exp_id == "":
-        chronos_job_id = os.environ.get("CHRONOS_JOB_ID")
-        slurm_job_id = os.environ.get("SLURM_JOB_ID")
-        assert chronos_job_id is None or slurm_job_id is None
-        exp_id = chronos_job_id if chronos_job_id is not None else slurm_job_id
-        if exp_id is None:
-            chars = "abcdefghijklmnopqrstuvwxyz0123456789"
-            while True:
-                exp_id = "".join(random.choice(chars) for _ in range(10))
-                if not os.path.isdir(os.path.join(sweep_path, exp_id)):
-                    break
-        else:
-            assert exp_id.isdigit()
+        chars = "abcdefghijklmnopqrstuvwxyz0123456789"
+        while True:
+            exp_id = "".join(random.choice(chars) for _ in range(10))
+            if not os.path.isdir(os.path.join(sweep_path, exp_id)):
+                break
         params.exp_id = exp_id
 
     # create the dump folder / update parameters

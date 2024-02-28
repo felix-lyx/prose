@@ -1,15 +1,13 @@
-import json
 import random
-import argparse
 import numpy as np
 import torch
 import os
-import pickle
 from pathlib import Path
+import wandb
 
 import symbolicregression
-from symbolicregression.slurm import init_signal_handler, init_distributed_mode
-from symbolicregression.utils import bool_flag, initialize_exp
+from symbolicregression.mode import init_distributed_mode
+from symbolicregression.utils import initialize_exp
 from symbolicregression.model import check_model_params, build_modules
 from symbolicregression.envs import build_env
 from symbolicregression.trainer import Trainer
@@ -20,24 +18,15 @@ import torch.multiprocessing
 
 torch.multiprocessing.set_sharing_strategy("file_system")
 
-WANDB_AVAILABLE = True
-try:
-    import wandb
-except:
-    WANDB_AVAILABLE = False
 
 # np.seterr(all="raise")
 np.seterr(divide="raise", under="ignore", over="raise", invalid="raise")
 
 
 def main(params):
-    # initialize the multi-GPU / multi-node training
-    # initialize experiment / SLURM signal handler for time limit / pre-emption
+    # initialize the multi-GPU / multi-node trainings
     init_distributed_mode(params)
     logger = initialize_exp(params)
-
-    if params.is_slurm_job:
-        init_signal_handler()
 
     # CPU / CUDA
     if not params.cpu:
@@ -46,7 +35,7 @@ def main(params):
 
     # wandb logging
 
-    if (not params.is_master) or (not WANDB_AVAILABLE):
+    if not params.is_master:
         params.use_wandb = False
     if params.use_wandb:
         wandb_id = wandb.util.generate_id() if params.wandb_id is None else params.wandb_id
@@ -85,7 +74,6 @@ def main(params):
             stats = evaluator.evaluate_in_domain(
                 "valid1",
                 "functions",
-                logger=logger,
                 save=params.save_results,
             )
             logger.info(
@@ -157,7 +145,6 @@ def main(params):
             stats = evaluator.evaluate_in_domain(
                 "valid1",
                 "functions",
-                logger=logger,
                 save=params.save_results,
             )
             logger.info(
@@ -252,7 +239,6 @@ if __name__ == "__main__":
         params.exp_name = "debug"
         if params.exp_id == "":
             params.exp_id = "debug_%08i" % random.randint(0, 100000000)
-        params.debug_slurm = True
 
     # check parameters
     check_model_params(params)

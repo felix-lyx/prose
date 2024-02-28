@@ -6,7 +6,6 @@
 
 from logging import getLogger
 
-# from .generators import operators_conv, Node
 from .environment import FunctionEnvironment
 
 logger = getLogger()

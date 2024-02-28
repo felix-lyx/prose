@@ -1,7 +1,6 @@
 import json
 import os
 import io
-import sys
 import time
 from logging import getLogger
 from collections import OrderedDict
@@ -17,11 +16,6 @@ import torch.nn.functional as F
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-has_apex = True
-try:
-    import apex
-except:
-    has_apex = False
 
 logger = getLogger()
 
@@ -99,10 +93,7 @@ class Trainer(object):
         # set parameters
         self.set_parameters()
 
-        # float16 / distributed (no AMP)
-        assert params.amp >= 1 or not params.fp16
         assert params.amp >= 0 or params.accumulate_gradients == 1
-        assert not params.nvidia_apex or has_apex
         if params.multi_gpu:
             logger.info("Using nn.parallel.DistributedDataParallel ...")
             for k in self.modules.keys():
@@ -120,7 +111,8 @@ class Trainer(object):
         # float16 / distributed (AMP)
         self.scaler = None
         if params.amp >= 0:
-            self.init_amp()
+            assert not self.params.cpu
+            self.scaler = torch.cuda.amp.GradScaler()
 
         # stopping criterion used for early stopping
         if params.stopping_criterion != "":
@@ -149,10 +141,7 @@ class Trainer(object):
         self.epoch = 0
         self.n_iter = 0
         self.n_total_iter = 0
-        self.stats = OrderedDict(
-            # [("processed_e", 0)] + [("processed_w", 0)] +
-            sum([[(x, []), (f"{x}-AVG-STOP-PROBS", [])] for x in env.TRAINING_TASKS], [])
-        )
+        self.stats = OrderedDict(sum([[(x, []), (f"{x}-AVG-STOP-PROBS", [])] for x in env.TRAINING_TASKS], []))
         self.last_time = time.time()
 
         # reload potential checkpoints
@@ -235,25 +224,6 @@ class Trainer(object):
         self.optimizer = get_optimizer(self.parameters["model"], params.lr, params.optimizer)
         logger.info("Optimizer: %s" % type(self.optimizer))
 
-    def init_amp(self):
-        """
-        Initialize AMP optimizer.
-        """
-        params = self.params
-        assert params.amp == 0 and params.fp16 is False or params.amp in [1, 2, 3] and params.fp16 is True
-        assert not params.cpu
-        mod_names = sorted(self.modules.keys())
-        if params.nvidia_apex is True:
-            modules, optimizer = apex.amp.initialize(
-                [self.modules[k] for k in mod_names],
-                self.optimizer,
-                opt_level=("O%i" % params.amp),
-            )
-            self.modules = {k: module for k, module in zip(mod_names, modules)}
-            self.optimizer = optimizer
-        else:
-            self.scaler = torch.cuda.amp.GradScaler()
-
     def optimize(self, loss):
         """
         Optimize.
@@ -275,19 +245,6 @@ class Trainer(object):
             if params.clip_grad_norm > 0:
                 clip_grad_norm_(self.parameters["model"], params.clip_grad_norm)
             optimizer.step()
-
-        # AMP optimization
-        elif params.nvidia_apex is True:
-            if (self.n_iter + 1) % params.accumulate_gradients == 0:
-                with apex.amp.scale_loss(loss, optimizer) as scaled_loss:
-                    scaled_loss.backward()
-                if params.clip_grad_norm > 0:
-                    clip_grad_norm_(apex.amp.master_params(self.optimizer), params.clip_grad_norm)
-                optimizer.step()
-                optimizer.zero_grad()
-            else:
-                with apex.amp.scale_loss(loss, optimizer, delay_unscale=True) as scaled_loss:
-                    scaled_loss.backward()
 
         else:
             if params.accumulate_gradients > 1:
@@ -333,21 +290,10 @@ class Trainer(object):
         # learning rates
         s_lr = (" - LR: ") + " / ".join("{:.4e}".format(group["lr"]) for group in self.optimizer.param_groups)
 
-        # processing speed
-        # new_time = time.time()
-        # diff = new_time - self.last_time
-        # s_speed = "{:7.2f} equations/s - {:8.2f} words/s - ".format(
-        #     self.stats["processed_e"] * 1.0 / diff,
-        #     self.stats["processed_w"] * 1.0 / diff,
-        # )
         max_mem = torch.cuda.max_memory_allocated() / 1024**2
         s_mem = " MEM: {:.2f} MB - ".format(max_mem)
-        # self.stats["processed_e"] = 0
-        # self.stats["processed_w"] = 0
-        # self.last_time = new_time
 
-        # log speed + stats + learning rate
-        # logger.info(s_iter + s_speed + s_mem + s_stat + s_lr + s_total_eq)
+        # log stats + learning rate
         logger.info(s_iter + s_mem + s_stat + s_lr)
 
     def get_generation_statistics(self, task):
@@ -455,20 +401,9 @@ class Trainer(object):
             v.requires_grad = requires_grad
 
         # reload optimizer
-        # AMP checkpoint reloading is buggy, we cannot reload optimizer
-        # instead, we only reload current iterations / learning rates
-        if self.params.amp == -1 or not self.params.nvidia_apex:
+        if self.params.amp == -1:
             logger.warning("Reloading checkpoint optimizer ...")
             self.optimizer.load_state_dict(data["optimizer"])
-        else:
-            logger.warning("Not reloading checkpoint optimizer.")
-            for group_id, param_group in enumerate(self.optimizer.param_groups):
-                if "num_updates" not in param_group:
-                    logger.warning("No 'num_updates' for optimizer.")
-                    continue
-                logger.warning("Reloading 'num_updates' and 'lr' for optimizer.")
-                param_group["num_updates"] = data["optimizer"]["param_groups"][group_id]["num_updates"]
-                param_group["lr"] = self.optimizer.get_lr_for_step(param_group["num_updates"])
 
         if "scaler" in data and self.scaler is not None:
             logger.warning("Reloading gradient scaler ...")
@@ -699,7 +634,7 @@ class Trainer(object):
 
         # forward / loss
 
-        with torch.cuda.amp.autocast(enabled=(params.amp >= 0) and (not params.nvidia_apex), dtype=torch.bfloat16):
+        with torch.cuda.amp.autocast(enabled=(params.amp >= 0), dtype=torch.bfloat16):
             # data features (data_len, bs, dim)
             data_input = embedder(data_input)
             data_input_encoded = data_encoder("fwd", x=data_input, lengths=data_len, causal=False)
@@ -790,17 +725,7 @@ class Trainer(object):
         self.data_loss += data_loss_item
         self.text_loss += text_loss_item
 
-        # self.stats[task+'_data_loss'].append(data_loss.item())
-        # self.stats[task+'_text_loss'].append(text_loss.item())
-
         # optimize
         self.optimize(loss)
 
-        # number of processed sequences / words
         self.inner_epoch += 1
-        # try:
-        #     self.n_equations += data_len.size(0)
-        #     self.stats["processed_e"] += data_len.size(0)
-        #     self.stats["processed_w"] += (data_len + text_len - 2).sum().item()
-        # except:
-        #     pass

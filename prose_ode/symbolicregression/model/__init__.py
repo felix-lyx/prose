@@ -1,16 +1,8 @@
-# Copyright (c) Meta Platforms, Inc. and affiliates.
-# All rights reserved.
-#
-# This source code is licensed under the license found in the
-# LICENSE file in the root directory of this source tree.
-#
-
 from logging import getLogger
 import os
 import torch
 import torch.nn as nn
 
-# from .embedders import LinearPointEmbedder
 from .transformer import TextTransformerModel, DataTransformerModel, DataOperatorModel, FusionTransformerModel
 
 logger = getLogger()
@@ -39,9 +31,6 @@ def build_modules(env, params):
     """
 
     modules = {}
-
-    # modules["embedder"] = TimeSeriesEmbedder(params, env)
-    # env.get_length_after_batching = modules["embedder"].get_length_after_batching
 
     modules["embedder"] = nn.Sequential(
         nn.Linear(1 + params.max_output_dimension, params.data_enc_emb_dim),
@@ -77,13 +66,6 @@ def build_modules(env, params):
     )
 
     if not params.text_only:
-        # modules["data_decoder"] = DataTransformerModel(
-        #     params,
-        #     is_encoder=False,
-        #     with_output=True,
-        #     positional_embeddings=params.data_dec_positional_embeddings,
-        #     # initial_embedder=modules["data_encoder"].initial_embedder,
-        # )
         modules["data_decoder"] = DataOperatorModel(
             params,
             with_output=True,

@@ -6,8 +6,7 @@
 
 from abc import ABC, abstractmethod
 import numpy as np
-import math
-from .generators import Node, NodeList
+from symbolicregression.envs.node_utils import Node, NodeList
 from .utils import *
 
 

@@ -1,33 +1,20 @@
-from distutils.log import INFO
 from logging import getLogger
 import os
 import io
-import sys
 import copy
 import json
-import operator
-from typing import Optional, List, Dict
-from collections import deque, defaultdict
-import time
-import traceback
+from collections import defaultdict
 
 # import math
 import numpy as np
-import symbolicregression.envs.encoders as encoders
 import symbolicregression.envs.generators as generators
-from symbolicregression.envs.generators import all_operators
-import symbolicregression.envs.simplifiers as simplifiers
-from typing import Optional, Dict
 import torch
-import torch.nn.functional as F
 from torch.utils.data.dataset import Dataset
 from torch.utils.data import DataLoader
 from torch.utils.data.distributed import DistributedSampler
-import collections
 from .utils import *
-from ..utils import bool_flag, timeout, MyTimeoutError
-import math
-import scipy
+from ..utils import bool_flag
+
 
 SPECIAL_WORDS = [
     "<BOS>",
@@ -73,8 +60,6 @@ class FunctionEnvironment(object):
         self.equation_encoder = self.generator.equation_encoder
         self.equation_words = self.generator.equation_words
         self.equation_words += self.float_words
-
-        self.simplifier = simplifiers.Simplifier(self.generator)
 
         # number of words / indices
         self.float_id2word = {i: s for i, s in enumerate(self.float_words)}
@@ -135,23 +120,6 @@ class FunctionEnvironment(object):
             data_label[:, i, 1:].copy_(eq[input_len - window_size :])
 
         return data_input, data_label, lengths
-
-    def batch_data_old(self, data, t_eval):
-        """
-        Take as input a list of n sequences (torch.Tensor vectors) and
-        time stamps. Return a tensor of size (slen, n, 2) where slen
-        is the length of the longest sentence, and a vector lengths containing
-        the length of each sentence.
-        """
-        assert t_eval.size(0) == len(data[0])
-        lengths = torch.LongTensor([len(eq) for eq in data])
-        assert lengths.min().item() == lengths.max().item()
-        sent = torch.zeros(lengths.max().item(), lengths.size(0), self.output_dim + 1, dtype=t_eval.dtype)
-
-        for i, eq in enumerate(data):
-            sent[0 : lengths[i], i, 0].copy_(t_eval)
-            sent[0 : lengths[i], i, 1].copy_(eq)
-        return sent, lengths
 
     def batch_equations(self, equations):
         """
@@ -234,15 +202,6 @@ class FunctionEnvironment(object):
         item = self.generator.generate_one_sample(self.rng, train=train)
 
         tree = item["tree"]
-        # if self.params.use_sympy:
-        #     len_before = len(tree.prefix().split(","))
-        #     tree = (
-        #         self.simplifier.simplify_tree(tree) if self.params.use_sympy else tree
-        #     )
-        #     len_after = len(tree.prefix().split(","))
-        #     if tree is None or len_after > 2 * len_before:
-        #         return item, ["simplification error"]
-        #     item['tree'] = tree
 
         if len(item["data"]) == 0:
             return item, ["data generation error"]
@@ -328,12 +287,6 @@ class FunctionEnvironment(object):
             type=bool_flag,
             default=False,
             help="Whether to use sympy parsing (basic simplification)",
-        )
-        parser.add_argument(
-            "--simplify",
-            type=bool_flag,
-            default=False,
-            help="Whether to use further sympy simplification",
         )
         parser.add_argument(
             "--use_abs",
