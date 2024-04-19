@@ -22,3 +22,13 @@ If you find our paper and code useful, please consider citing:
   year={2023}
 }
 ```
+
+
+```
+@article{sun2024foundation,
+      title={Towards a Foundation Model for Partial Differential Equation: Multi-Operator Learning and Extrapolation}, 
+      author={Sun, Jingmin and Liu, Yuxuan and Zhang, Zecheng and Schaeffer, Hayden},
+      journal={arXiv preprint arXiv:2404.12355},
+      year={2024}
+}
+```
