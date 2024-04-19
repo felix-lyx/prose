@@ -1,6 +1,6 @@
-# PROSE: Predicting Operators and Symbolic Expressions using Multimodal Transformers
+# PROSE: Predicting Multiple Operators and Symbolic Expressions
 
-This folder contains code for the paper [Towards a Foundation Model for Partial Differential Equation: Multi-Operator Learning and Extrapolation](https://arxiv.org/abs/2404.12355). 
+This folder contains code for the paper [Towards a Foundation Model for Partial Differential Equations: Multi-Operator Learning and Extrapolation](https://arxiv.org/abs/2404.12355). 
 
 The code is based on the repositories [Deep Symbolic Regression](https://github.com/facebookresearch/symbolicregression) and [Deep Learning for Symbolic Mathematics](https://github.com/facebookresearch/SymbolicMathematics).
 
@@ -36,15 +36,17 @@ Distributed training is available via PyTorch Distributed Data Parallel (DDP)
 
 To launch a run on 1 node with 2 GPU, use 
 
-```torchrun --standalone --nnodes 1 --nproc_per_node 2 train.py```
+```
+torchrun --standalone --nnodes 1 --nproc_per_node 2 train.py
+```
 
 ## Citation
 
-[Towards a Foundation Model for Partial Differential Equation: Multi-Operator Learning and Extrapolation](https://arxiv.org/abs/2404.12355)
+[Towards a Foundation Model for Partial Differential Equations: Multi-Operator Learning and Extrapolation](https://arxiv.org/abs/2404.12355)
 
 ```
 @article{sun2024foundation,
-  title={Towards a Foundation Model for Partial Differential Equation: Multi-Operator Learning and Extrapolation}, 
+  title={Towards a Foundation Model for Partial Differential Equations: Multi-Operator Learning and Extrapolation}, 
   author={Sun, Jingmin and Liu, Yuxuan and Zhang, Zecheng and Schaeffer, Hayden},
   journal={arXiv preprint arXiv:2404.12355},
   year={2024}
