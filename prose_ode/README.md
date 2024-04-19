@@ -46,7 +46,7 @@ torchrun --standalone --nnodes 1 --nproc_per_node 2 train.py
 
 ```
 @article{liu2023prose,
-  title={Prose: Predicting operators and symbolic expressions using multimodal transformers},
+  title={PROSE: Predicting operators and symbolic expressions using multimodal transformers},
   author={Liu, Yuxuan and Zhang, Zecheng and Schaeffer, Hayden},
   journal={arXiv preprint arXiv:2309.16816},
   year={2023}
