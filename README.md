@@ -1,6 +1,10 @@
 # PROSE: Predicting Multiple Operators and Symbolic Expressions
 
-This repository contains code for the paper [PROSE: Predicting Multiple Operators and Symbolic Expressions using Multimodal Transformers](https://arxiv.org/abs/2309.16816). See also the [UCLA CAM Reports](https://ww3.math.ucla.edu/wp-content/uploads/2023/10/PROSE_cam.pdf). More details can be found in ``prose_ode/README.md``.
+This repository contains code for papers
+
+- [PROSE: Predicting Multiple Operators and Symbolic Expressions using Multimodal Transformers](https://arxiv.org/abs/2309.16816). See also the [UCLA CAM Reports](https://ww3.math.ucla.edu/wp-content/uploads/2023/10/PROSE_cam.pdf). More details can be found in ``prose_ode/README.md``.
+
+- [Towards a Foundation Model for Partial Differential Equation: Multi-Operator Learning and Extrapolation](https://arxiv.org/abs/2404.12355). More details can be found in ``prose_pde/README.md``.
 
 ## Install dependencies
 

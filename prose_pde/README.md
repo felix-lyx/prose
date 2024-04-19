@@ -1,6 +1,6 @@
 # PROSE: Predicting Operators and Symbolic Expressions using Multimodal Transformers
 
-This repository contains code for the paper [Towards a Foundation Model for Partial Differential Equation: Multi-Operator Learning and Extrapolation](https://arxiv.org/abs/2404.12355). 
+This folder contains code for the paper [Towards a Foundation Model for Partial Differential Equation: Multi-Operator Learning and Extrapolation](https://arxiv.org/abs/2404.12355). 
 
 The code is based on the repositories [Deep Symbolic Regression](https://github.com/facebookresearch/symbolicregression) and [Deep Learning for Symbolic Mathematics](https://github.com/facebookresearch/SymbolicMathematics).
 
