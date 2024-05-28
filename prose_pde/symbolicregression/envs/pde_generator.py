@@ -2105,7 +2105,7 @@ class PDEGenerator(ODEGenerator):
         op_list = [["sub", "sub"]]
         term_list = [
             [
-                self.mul_terms([str(tf), "ut_0"]),
+                self.mul_terms([str(coeff), "ut_0"]),
                 self.mul_terms([str(nu), "uxx_0"]),
                 Node(
                     "mul",

@@ -92,7 +92,7 @@ def get_fusion_masks(slen, slen_data, slen_text, lengths1, lengths2, causal=Fals
     assert mask_data.size() == (bs, slen_data)
 
     alen_text = torch.arange(slen_text, dtype=torch.long, device=lengths2.device)
-    mask_text = alen_text < lengths1[:, None]
+    mask_text = alen_text < lengths2[:, None]
     assert mask_text.size() == (bs, slen_text)
 
     if causal:
