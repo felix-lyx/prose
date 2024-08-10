@@ -1588,7 +1588,8 @@ class PDEGenerator(ODEGenerator):
             beta = 1
         else:
             beta = 0.5
-
+        beta_range = self.get_sample_range(beta)
+        beta = self.refine_floats(rng.uniform(*beta_range, (1,)))[0]
         tf = self.tfinals["wave"]
         coeff_t = p.t_range / tf
         t_eval = self.t_eval / coeff_t
@@ -1599,8 +1600,6 @@ class PDEGenerator(ODEGenerator):
             ]
         ]
         item["tree"] = self.tree_from_list(op_list, term_list)
-        beta_range = self.get_sample_range(beta)
-        beta = self.refine_floats(rng.uniform(*beta_range, (1,)))[0]
         num_initial_points = self.ICs_per_equation if train else self.eval_ICs_per_equation
 
         res = []
