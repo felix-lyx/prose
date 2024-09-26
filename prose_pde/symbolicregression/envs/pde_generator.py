@@ -1962,7 +1962,7 @@ class PDEGenerator(ODEGenerator):
 
         nu = self.refine_floats(rng.uniform(*nu_range, (1,)))[0]
         rho = self.refine_floats(rng.uniform(*rho_range, (1,)))[0]
-        a = 0
+        a = self.refine_floats(rng.uniform(size=(1,)))[0]
 
 
         tf = self.tfinals["diff_bistablereact_1D"]
