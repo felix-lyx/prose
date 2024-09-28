@@ -1,6 +1,6 @@
 # PROSE: Predicting Multiple Operators and Symbolic Expressions using Multimodal Transformers
 
-This folder contains code for the paper [PROSE: Predicting Multiple Operators and Symbolic Expressions using Multimodal Transformers](https://arxiv.org/abs/2309.16816). See also the [UCLA CAM Reports](https://ww3.math.ucla.edu/wp-content/uploads/2023/10/PROSE_cam.pdf).
+This folder contains code for the paper [PROSE: Predicting Multiple Operators and Symbolic Expressions using Multimodal Transformers](https://doi.org/10.1016/j.neunet.2024.106707).
 
 The code is based on the repositories [Deep Symbolic Regression](https://github.com/facebookresearch/symbolicregression) and [Deep Learning for Symbolic Mathematics](https://github.com/facebookresearch/SymbolicMathematics).
 
@@ -42,13 +42,15 @@ torchrun --standalone --nnodes 1 --nproc_per_node 2 train.py
 
 ## Citation
 
- [PROSE: Predicting Multiple Operators and Symbolic Expressions using Multimodal Transformers](https://arxiv.org/abs/2309.16816)
+ [PROSE: Predicting Multiple Operators and Symbolic Expressions using Multimodal Transformers](https://doi.org/10.1016/j.neunet.2024.106707)
 
 ```
-@article{liu2023prose,
-  title={PROSE: Predicting operators and symbolic expressions using multimodal transformers},
+@article{liu2024prose,
+  title={{PROSE}: Predicting multiple operators and symbolic expressions using multimodal transformers},
   author={Liu, Yuxuan and Zhang, Zecheng and Schaeffer, Hayden},
-  journal={arXiv preprint arXiv:2309.16816},
-  year={2023}
+  journal={Neural Networks},
+  pages={106707},
+  year={2024},
+  publisher={Elsevier}
 }
 ```
