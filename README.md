@@ -6,6 +6,8 @@ This repository contains code for the following papers:
 
 - [Towards a Foundation Model for Partial Differential Equations: Multi-Operator Learning and Extrapolation](https://arxiv.org/abs/2404.12355). More details can be found in ``prose_pde/README.md``.
 
+- [PROSE-FD: A Multimodal PDE Foundation Model for Learning Multiple Operators for Forecasting Fluid Dynamics](https://arxiv.org/abs/2409.09811). More details can be found in ``prose_fd/README.md``.
+
 ## Install dependencies
 
 Using conda and the ```env.yml``` file:
@@ -34,6 +36,15 @@ If you find our paper and code useful, please consider citing:
   title={Towards a Foundation Model for Partial Differential Equations: Multi-Operator Learning and Extrapolation}, 
   author={Sun, Jingmin and Liu, Yuxuan and Zhang, Zecheng and Schaeffer, Hayden},
   journal={arXiv preprint arXiv:2404.12355},
+  year={2024}
+}
+```
+
+```
+@article{liu2024prose_fd,
+  title={{PROSE-FD}: A Multimodal PDE Foundation Model for Learning Multiple Operators for Forecasting Fluid Dynamics},
+  author={Liu, Yuxuan and Sun, Jingmin and He, Xinjie and Pinney, Griffin and Zhang, Zecheng and Schaeffer, Hayden},
+  journal={arXiv preprint arXiv:2409.09811},
   year={2024}
 }
 ```
