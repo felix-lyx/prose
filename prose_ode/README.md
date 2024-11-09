@@ -49,6 +49,7 @@ torchrun --standalone --nnodes 1 --nproc_per_node 2 train.py
   title={{PROSE}: Predicting multiple operators and symbolic expressions using multimodal transformers},
   author={Liu, Yuxuan and Zhang, Zecheng and Schaeffer, Hayden},
   journal={Neural Networks},
+  volume={180},
   pages={106707},
   year={2024},
   publisher={Elsevier}

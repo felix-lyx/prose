@@ -1,6 +1,6 @@
 # PROSE-FD: A Multimodal PDE Foundation Model for Learning Multiple Operators for Forecasting Fluid Dynamics
 
-This folder contains code for the paper [PROSE-FD: A Multimodal PDE Foundation Model for Learning Multiple Operators for Forecasting Fluid Dynamics](https://arxiv.org/abs/2409.09811).
+This folder contains code for the paper [PROSE-FD: A Multimodal PDE Foundation Model for Learning Multiple Operators for Forecasting Fluid Dynamics](https://arxiv.org/abs/2409.09811). Accepted by 2024 NeurIPS Foundation Models for Science Workshop. Pretrained PROSE-FD model weights can be found on https://huggingface.co/felix-lyx/prose.
 
 ## Run the model
 

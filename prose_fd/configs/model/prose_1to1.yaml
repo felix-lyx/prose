@@ -4,7 +4,7 @@ name: prose_1to1
 dim_emb: 1024
 dim_ffn: 2048
 n_head: 8
-dropout: 0.1
+dropout: 0
 norm_first: true
 
 patch_num: 8 # for input, number of patches per dimension
@@ -12,7 +12,7 @@ patch_num_output: 16 # for output, number of patches per dimension
 
 carry_last_frame: 0
 
-time_embed: continuous # select from continuous and learnable
+time_embed: learnable # select from continuous and learnable
 
 
 embedder:
@@ -26,8 +26,10 @@ embedder:
 
     initialize_small_output: 0
     
-    conv_dim: 64
+    conv_dim: 32
     early_conv: 0
+
+    deep: 0
 
 data_encoder:
     n_layer: 7
@@ -37,6 +39,11 @@ data_encoder:
     n_head: ${..n_head}
     dropout: ${..dropout}
     norm_first: ${..norm_first}
+
+    custom_encoder: ${..custom_encoder}
+    custom_attn: ${..custom_attn}
+    rotary: ${..rotary}
+    norm: ${..norm}
     
 data_decoder:
     n_layer: 12
@@ -48,6 +55,16 @@ data_decoder:
     dropout: ${..dropout}
     norm_first: ${..norm_first}
     patch_num_output: ${..patch_num_output}
+    time_embed: ${..time_embed}
 
     final_ln: 1 # whether to have final norm layer
+
+    custom_attn: ${..custom_attn}
+    rotary: ${..rotary}
+    norm: ${..norm}
+
+custom_encoder: 1
+custom_attn: 1
+rotary: 0
+norm: rms # select from [layer, rms]
     
