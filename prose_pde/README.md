@@ -1,5 +1,7 @@
 # PROSE (PDE): Predicting Multiple Operators and Symbolic Expression
 
+## This original version is no longer updated, please check [prose_v1](https://github.com/JingminSun/prose_v1) for more details.
+
 This folder contains code for the paper [Towards a Foundation Model for Partial Differential Equations: Multi-Operator Learning and Extrapolation](https://arxiv.org/abs/2404.12355). 
 
 The code is based on the repositories [Deep Symbolic Regression](https://github.com/facebookresearch/symbolicregression) and [Deep Learning for Symbolic Mathematics](https://github.com/facebookresearch/SymbolicMathematics).
